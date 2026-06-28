@@ -15,9 +15,13 @@ using VectorDataSearch;
 // return;
 
 
-Console.WriteLine("Your local Ollama AI assistant is ready to help you with movie recommendations and weather information.\n");
-Console.WriteLine("I remember the last 20 messages in our conversation.\n");
+Console.WriteLine("Your local Ollama AI assistant is ready to help you with movie recommendations and weather information");
+Console.WriteLine("I remember the last 20 messages in our conversation.");
 Console.WriteLine("Type 'exit' to end the conversation.\n");
+
+Console.WriteLine("Generating embeddings for movie descriptions and storing them in the vector store...");
+
+Console.WriteLine("--------------------------------------------------------------------------------------------------------");
 
 
 var ollamaClient = new OllamaApiClient("http://localhost:11434")
@@ -99,6 +103,9 @@ async Task<string> GetMovieRecommendations(string query)
 // {
 //     Console.WriteLine($"Movie: {result.Record.Title}, Score: {result.Score}, Description: {result.Record.Description}");
 // }
+
+
+Console.WriteLine("Let's start the conversation! You can ask me about movie recommendations or the weather in any city.");
 
 // Generate a chat screen here
 while (true)
