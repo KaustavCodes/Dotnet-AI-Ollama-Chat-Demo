@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace VectorDataSearch
 {
 
@@ -122,18 +124,34 @@ namespace VectorDataSearch
     public class Current
     {
         public string Time { get; set; } = string.Empty;
+
+        [JsonPropertyName("temperature_2m")]
         public double Temperature2m { get; set; }
+
+        [JsonPropertyName("apparent_temperature")]
         public double ApparentTemperature { get; set; }
+
+        [JsonPropertyName("relative_humidity_2m")]
         public int RelativeHumidity2m { get; set; }
+
+        [JsonPropertyName("wind_speed_10m")]
         public double WindSpeed10m { get; set; }
+
+        [JsonPropertyName("weather_code")]
         public int WeatherCode { get; set; }
     }
 
     public class Daily
     {
         public List<string> Time { get; set; } = new();
+
+        [JsonPropertyName("weather_code")]
         public List<int> WeatherCode { get; set; } = new();
+
+        [JsonPropertyName("temperature_2m_max")]
         public List<double> Temperature2mMax { get; set; } = new();
+
+        [JsonPropertyName("temperature_2m_min")]
         public List<double> Temperature2mMin { get; set; } = new();
     }
 
@@ -144,9 +162,14 @@ namespace VectorDataSearch
 
     public class CurrentAirQuality
     {
+        [JsonPropertyName("pm2_5")]
         public double? Pm2_5 { get; set; }
         public double? Pm10 { get; set; }
+
+        [JsonPropertyName("european_aqi")]
         public int? EuropeanAqi { get; set; }
+
+        [JsonPropertyName("us_aqi")]
         public int? UsAqi { get; set; }
     }
 

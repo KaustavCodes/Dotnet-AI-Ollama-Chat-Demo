@@ -1,5 +1,5 @@
-﻿using Microsoft.SemanticKernel.Connectors.InMemory;
 using Microsoft.Extensions.AI;
+using Microsoft.SemanticKernel.Connectors.InMemory;
 using OllamaSharp;
 using VectorDataSearch;
 
