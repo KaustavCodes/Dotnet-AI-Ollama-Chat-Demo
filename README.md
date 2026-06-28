@@ -2,6 +2,8 @@
 
 A personal playground project demonstrating local AI chat, tool/function calling, and vector database search in .NET 10. The project integrates Microsoft.Extensions.AI, Ollama, and Microsoft Semantic Kernel's in-memory vector store.
 
+![Application Demo](image.png)
+
 ## Features
 
 - Local LLM Integration: Chat client configured to run with a local Ollama instance using the Gemma 4 model (or other local models like Qwen 2.5).
