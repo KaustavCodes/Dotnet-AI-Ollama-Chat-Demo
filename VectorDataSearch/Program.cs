@@ -2,7 +2,18 @@
 using Microsoft.Extensions.AI;
 using OllamaSharp;
 using VectorDataSearch;
-using System.Data.SqlTypes;
+
+
+// WeatherResult weatherResult = await WeatherService.GetWeatherAndAirQualityAsync("Kolkata");
+
+// // Json Log Weather Result
+// Console.WriteLine("Weather Result:");
+// Console.WriteLine($"Location: {weatherResult.Location.Name}, {weatherResult.Location.Admin1}, {weatherResult.Location.Country}");
+// Console.WriteLine($"Coordinates: {weatherResult.Location.Latitude}, {weatherResult.Location.Longitude}");
+// Console.WriteLine($"Current Weather: {weatherResult.Weather.Current.Temperature}°C, {weatherResult.Weather.Current.Condition}, Feels Like: {weatherResult.Weather.Current.FeelsLike}°C, Humidity: {weatherResult.Weather.Current.Humidity}%, Wind Speed: {weatherResult.Weather.Current.WindSpeed} m/s");
+
+// return;
+
 
 Console.WriteLine("Your local Ollama AI assistant is ready to help you with movie recommendations and weather information.\n");
 Console.WriteLine("I remember the last 20 messages in our conversation.\n");
@@ -36,7 +47,8 @@ foreach (var movie in MovieData.GetMovies())
 
 var tools = new List<AITool>
 {
-    AIFunctionFactory.Create(GetWeather, "get_weather", "Get the current weather for a city in India"),
+    //AIFunctionFactory.Create(GetWeather, "get_weather", "Get the current weather for a city in India"),
+    AIFunctionFactory.Create(WeatherService.GetWeatherAndAirQualityAsync, "get_weather", "Get the current weather and air quality for a city."),
     AIFunctionFactory.Create(GetMovieRecommendations, "get_movie_recommendations", "Get movie recommendations based on a description"),
 };
 
@@ -44,6 +56,7 @@ var history = new List<ChatMessage>
 {
     new (ChatRole.System,
         @"You are a helpful assistant with access to tools.
+        Your name is Ollama AI (Gemma 4).
         When the user asks about weather or movie recommendations, you MUST use the appropriate tool.
         Do not guess or answer directly. Always call the tool.")
 };
@@ -96,7 +109,7 @@ while (true)
 
     history.Add(new ChatMessage(ChatRole.User, userInput));
 
-    Console.Write("AI: ");
+    Console.Write("Ollama AI (Gemma 4): ");
     string fullResponse = string.Empty;
 
     var options = new ChatOptions
