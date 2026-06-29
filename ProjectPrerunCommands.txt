@@ -1,0 +1,3 @@
+source ~/ollama-ai-env/bin/activate
+cd /path/to/your/project
+dotnet run
