@@ -1,3 +1,6 @@
+ /* TO RUN WITH PYTHON SUPPORT WE NEED THE BELOW */
+
+
 source ~/ollama-ai-env/bin/activate
 cd /path/to/your/project
 dotnet run
