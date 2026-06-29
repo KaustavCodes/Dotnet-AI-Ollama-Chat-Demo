@@ -14,6 +14,8 @@ const string AiName = "Local AI (Ollama)";
 
 const int MaxConversationHistory = 5;
 
+const string defaultImageName = "ai-test-image.jpg.png";
+
 // WeatherResult weatherResult = await WeatherService.GetWeatherAndAirQualityAsync("Kolkata");
 
 // // Json Log Weather Result
@@ -76,7 +78,7 @@ var tools = new List<AITool>
     AIFunctionFactory.Create(RememberService.AddToRemember, "remember", "Add a string to the assistant's memory"),
     AIFunctionFactory.Create(RememberService.GetAllRememberedItems, "get_remembered_items", "Retrieve all strings that the assistant has remembered. Use this for things where the user asked you to remember something and what was questions?"),
     AIFunctionFactory.Create(RememberService.ForgetItem, "forget_item", "Forget a specific string that the assistant has remembered"),
-    AIFunctionFactory.Create(RememberService.ForgetAll, "forget_all", "Forget all strings that the assistant has remembered"),
+    AIFunctionFactory.Create(RememberService.ForgetAll, "forget_all", "Forget all strings that the assistant has remembered")
 };
 
 // ==================== SYSTEM PROMPT ====================
@@ -90,7 +92,7 @@ You have access to powerful tools. **You MUST use tools for all mathematical cal
 ### Tool Usage Rules (Follow Strictly):
 
 - **Simple math** (basic arithmetic, percentages, square roots, simple formulas) → use `calculate`
-- **Complex math**, quadratic equations, systems of equations, symbolic math, integrals, or when `calculate` fails → use `execute_python`
+- **Complex math**, quadratic equations, systems of equations, symbolic math, integrals, or when `calculate` fails → use `execute_python_code`
 - Weather → `get_weather`
 - Movie recommendations → `get_movie_recommendations`
 - Current date & time → `get_todays_date_time`
@@ -99,15 +101,26 @@ You have access to powerful tools. **You MUST use tools for all mathematical cal
 - Read files → `read_file`
 - List files → `list_directory`
 - Web search → `duckduckgo_search`
+- Image analysis requests: if the latest user message contains an image, analyze that image directly. Do NOT call unrelated tools.
+- Never call `get_todays_date_time` unless the user explicitly asks for date/time/day.
 - For delete remember item, first call GetAllRememberedItems and then call ForgetItem with the exact string of the item to be forgotten.
 
 ### Important Instructions for Math:
 - Never solve math problems yourself.
-- For quadratic equations, always prefer `execute_python` and write clean Python code using `import math` or `import sympy as sp` if needed.
+- For quadratic equations, always prefer `execute_python_code` and write clean Python code using `import math` or `import sympy as sp` if needed.
 - You can call multiple tools if necessary.
 
 Be concise, natural, and helpful in your final response.")
 };
+
+
+//Load Image into chat memory
+// string imagePath = Path.Combine(Directory.GetCurrentDirectory(), testImageName);
+// if (File.Exists(imagePath))
+// {
+//     AIContent aIContent = new DataContent(File.ReadAllBytes(imagePath), "image/png");
+//     history.Add(new ChatMessage(ChatRole.User, [aIContent]));
+// }
 
 // Embedding generation and vector store setup
 
@@ -132,8 +145,6 @@ async Task<string> GetMovieRecommendations(string query)
         ? string.Join("\n", recommendations)
         : "I could not find movie recommendations for that query.";
 }
-
-
 
 string GetTodaysDateTime()
 {
@@ -165,6 +176,20 @@ string GetCurrentDirectoryPath()
     return Directory.GetCurrentDirectory();
 }
 
+void TrimHistoryPreservingSystem(List<ChatMessage> messages, int maxNonSystemMessages)
+{
+    while (messages.Count(m => m.Role != ChatRole.System) > maxNonSystemMessages)
+    {
+        int indexToRemove = messages.FindIndex(m => m.Role != ChatRole.System);
+        if (indexToRemove < 0)
+        {
+            break;
+        }
+
+        messages.RemoveAt(indexToRemove);
+    }
+}
+
 // var query = "A movie about a hacker who discovers the truth about reality";
 // var queryEmbedding = await embeddingGenerator.GenerateVectorAsync(query);
 // var searchResults = moviesStore.SearchAsync(queryEmbedding, top: 2);
@@ -184,16 +209,42 @@ while (true)
     var userInput = Console.ReadLine()?.Trim();
     if (string.IsNullOrEmpty(userInput) || userInput.ToLower() == "exit") break;
 
-    history.Add(new ChatMessage(ChatRole.User, userInput));
+    var options = new ChatOptions
+    {
+        ToolMode = ChatToolMode.Auto
+    };
+
+    bool isImageAnalysisRequest = ImageService.IsImageAnalysisRequest(userInput);
+    string imagePath = ImageService.ResolveImagePathWithFallback(userInput, Directory.GetCurrentDirectory(), defaultImageName);
+
+    bool imageExists = File.Exists(imagePath);
+
+    if (isImageAnalysisRequest && imageExists)
+    {
+        string mimeType = ImageService.GetImageMimeType(imagePath);
+        byte[] imageBytes = File.ReadAllBytes(imagePath);
+
+        history.Add(new ChatMessage(ChatRole.User,
+        [
+            new TextContent(userInput),
+            new DataContent(imageBytes, mimeType)
+        ]));
+
+        Console.WriteLine($" [IMAGE ATTACHED] {Path.GetFileName(imagePath)} ({mimeType})");
+    }
+    else
+    {
+        history.Add(new ChatMessage(ChatRole.User, userInput));
+        options.Tools = tools;
+    }
+
+    if (isImageAnalysisRequest && !imageExists)
+    {
+        Console.WriteLine($" [WARNING] Image file not found at: {imagePath}");
+    }
 
     Console.Write($"{AiName}: ");
     string fullResponse = string.Empty;
-
-    var options = new ChatOptions
-    {
-        Tools = tools,
-        ToolMode = ChatToolMode.Auto   // Important
-    };
 
     await foreach (var update in chatClient.GetStreamingResponseAsync(history, options))
     {
@@ -207,5 +258,5 @@ while (true)
     Console.WriteLine("\n");
     history.Add(new ChatMessage(ChatRole.Assistant, fullResponse));
 
-    if (history.Count > MaxConversationHistory) history.RemoveAt(0);
+    TrimHistoryPreservingSystem(history, MaxConversationHistory);
 }

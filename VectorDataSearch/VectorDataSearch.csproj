@@ -16,4 +16,11 @@
     <PackageReference Include="OllamaSharp" Version="5.4.25" />
   </ItemGroup>
 
+  <!--Copy to output directory-->
+  <ItemGroup>
+    <None Update="images/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
