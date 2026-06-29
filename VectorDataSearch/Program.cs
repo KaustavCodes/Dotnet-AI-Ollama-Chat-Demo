@@ -27,7 +27,7 @@ Console.WriteLine("-------------------------------------------------------------
 var ollamaClient = new OllamaApiClient("http://localhost:11434")
 {
     // SelectedModel = "qwen2.5:7b"
-    SelectedModel = "gemma4:latest"
+    SelectedModel = "gemma4:e4b"
 };
 
 IChatClient chatClient = ((IChatClient)ollamaClient).AsBuilder()
@@ -54,7 +54,7 @@ var tools = new List<AITool>
     //AIFunctionFactory.Create(GetWeather, "get_weather", "Get the current weather for a city in India"),
     AIFunctionFactory.Create(WeatherService.GetWeatherAndAirQualityAsync, "get_weather", "Get the current weather and air quality for a city."),
     AIFunctionFactory.Create(GetMovieRecommendations, "get_movie_recommendations", "Get movie recommendations based on a description"),
-    AIFunctionFactory.Create(WebScrapperService.DuckDuckGoSearch, "duckduckgo_search", "Search the web using DuckDuckGo and return the top results")
+    AIFunctionFactory.Create(WebScrapperService.DuckDuckGoSearchAsync, "duckduckgo_search", "Search the web using DuckDuckGo and return the top results")
 };
 
 var history = new List<ChatMessage>
