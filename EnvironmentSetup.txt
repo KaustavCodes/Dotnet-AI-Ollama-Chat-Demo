@@ -1,0 +1,11 @@
+# 1. Create a virtual environment for your project
+python3 -m venv ~/ollama-ai-env
+
+# 2. Activate it
+source ~/ollama-ai-env/bin/activate
+
+# 3. Upgrade pip
+pip install --upgrade pip
+
+# 4. Install the math packages
+pip install sympy numpy scipy matplotlib
