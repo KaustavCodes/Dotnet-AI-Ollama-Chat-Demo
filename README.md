@@ -1,17 +1,34 @@
 # Dotnet AI Ollama Chat Demo
 
+> 🎯 **This is a hobby project** — A personal playground to explore and test AI possibilities locally without relying on cloud-based services.
+
 A personal playground project demonstrating local AI chat, tool/function calling, and vector database search in .NET 10. The project integrates Microsoft.Extensions.AI, Ollama, and Microsoft Semantic Kernel's in-memory vector store.
 
 ![Application Demo](image.png)
 
 ## Features
 
-- Local LLM Integration: Chat client configured to run with a local Ollama instance using the Gemma 4 model (or other local models like Qwen 2.5).
-- Function Calling (Tools): The assistant can dynamically call local tools to fetch real-time information.
-  - Weather: Retrieves current weather and air quality for any city using Open-Meteo APIs.
-  - Movie Recommendations: Performs a semantic vector search over a local collection of movies.
-- In-Memory Vector Store: Seeds a collection of movies into Microsoft Semantic Kernel's `InMemoryVectorStore`, generating embeddings locally via `nomic-embed-text` and searching them using cosine similarity.
-- Interactive Streaming: Interactive console loop with streaming output and message history management (remembers the last 20 messages).
+### Core AI Capabilities
+- **Local LLM Integration**: Chat client configured to run with a local Ollama instance using the Gemma 4 model (or other local models like Qwen 2.5).
+- **Function Calling (Tools)**: The assistant can dynamically call local tools to fetch real-time information and perform tasks.
+- **Interactive Streaming**: Interactive console loop with streaming output and conversation history management.
+
+### Tools & Functions
+The assistant has access to a comprehensive toolkit of local functions:
+
+- **Weather**: Retrieves current weather and air quality for any city using Open-Meteo APIs.
+- **Movie Recommendations**: Performs semantic vector search over a local collection of movies based on natural language queries.
+- **Mathematics**: 
+  - Calculator service for basic and complex mathematical calculations (percentages, roots, trigonometry, etc.)
+  - Python code execution for advanced calculations, algorithms, and complex logic.
+- **Web Search**: DuckDuckGo integration to search the web and return relevant results.
+- **File Operations**: Read text files and list directory contents locally.
+- **Memory Management**: Remember/Forget items — the assistant can store and retrieve important information across conversations.
+- **Date & Time**: Get current date, time, and day of the week.
+
+### Vector Database & Embeddings
+- **In-Memory Vector Store**: Seeds a collection of movies into Microsoft Semantic Kernel's `InMemoryVectorStore`, generating embeddings locally via `nomic-embed-text` and searching them using cosine similarity.
+- **Semantic Search**: Natural language queries are converted to vectors and matched against stored movie descriptions for intelligent recommendations.
 
 ## Prerequisites
 
