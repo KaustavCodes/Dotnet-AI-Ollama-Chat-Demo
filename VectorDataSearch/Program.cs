@@ -78,7 +78,14 @@ var tools = new List<AITool>
     AIFunctionFactory.Create(RememberService.AddToRemember, "remember", "Add a string to the assistant's memory"),
     AIFunctionFactory.Create(RememberService.GetAllRememberedItems, "get_remembered_items", "Retrieve all strings that the assistant has remembered. Use this for things where the user asked you to remember something and what was questions?"),
     AIFunctionFactory.Create(RememberService.ForgetItem, "forget_item", "Forget a specific string that the assistant has remembered"),
-    AIFunctionFactory.Create(RememberService.ForgetAll, "forget_all", "Forget all strings that the assistant has remembered")
+    AIFunctionFactory.Create(RememberService.ForgetAll, "forget_all", "Forget all strings that the assistant has remembered"),
+
+    AIFunctionFactory.Create(MacSystemService.SetVolume, "set_volume", "Set system output volume (0-100)"),
+    AIFunctionFactory.Create(MacSystemService.AdjustVolume, "adjust_volume", "Increase or decrease volume by a percentage"),
+    AIFunctionFactory.Create(MacSystemService.GetCurrentVolume, "get_current_volume", "Get current system volume level"),
+    AIFunctionFactory.Create(MacSystemService.SetDarkMode, "set_dark_mode", "Turn Dark Mode on or off"),
+    AIFunctionFactory.Create(MacSystemService.SetNightShift, "set_night_shift", "Turn Night Shift (blue light filter) on or off"),
+    AIFunctionFactory.Create(MacSystemService.GetDisplayModeStatus, "get_display_status", "Check current Dark Mode and Night Shift status"),
 };
 
 // ==================== SYSTEM PROMPT ====================
@@ -104,6 +111,7 @@ You have access to powerful tools. **You MUST use tools for all mathematical cal
 - Image analysis requests: if the latest user message contains an image, analyze that image directly. Do NOT call unrelated tools.
 - Never call `get_todays_date_time` unless the user explicitly asks for date/time/day.
 - For delete remember item, first call GetAllRememberedItems and then call ForgetItem with the exact string of the item to be forgotten.
+- For volume control (louder, quieter, set volume) → use set_volume or adjust_volume
 
 ### Important Instructions for Math:
 - Never solve math problems yourself.
